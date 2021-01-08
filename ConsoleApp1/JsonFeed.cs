@@ -32,7 +32,12 @@ namespace ConsoleApp1
 				url += category;
 			}
 
-            string joke = Task.FromResult(client.GetStringAsync(url).Result).Result;
+            string joke = "";
+			try{
+				joke = Task.FromResult(client.GetStringAsync(url).Result).Result;
+			}  catch(HttpRequestException e) {
+				System.Diagnostics.Debug.WriteLine(e.Message);
+			}
 
             if (firstname != null && lastname != null)
             {
@@ -51,19 +56,29 @@ namespace ConsoleApp1
         /// <param name="client2"></param>
         /// <returns></returns>
 		public static dynamic Getnames()
-		{
-			HttpClient client = new HttpClient();
-			client.BaseAddress = new Uri(_url);
-			var result = client.GetStringAsync("").Result;
-			return JsonConvert.DeserializeObject<dynamic>(result);
+		{	try {
+				HttpClient client = new HttpClient();
+				client.BaseAddress = new Uri(_url);
+				var result = client.GetStringAsync("").Result;
+				return JsonConvert.DeserializeObject<dynamic>(result);
+			} catch(HttpRequestException e) {
+				System.Diagnostics.Debug.WriteLine(e.Message);
+			}
+			return null;
 		}
 
 		public static string[] GetCategories()
 		{
-			HttpClient client = new HttpClient();
-			client.BaseAddress = new Uri(_url);
-			string url = "jokes/categories";
-			return new string[] { Task.FromResult(client.GetStringAsync(url).Result).Result };
+			try {
+				HttpClient client = new HttpClient();
+				client.BaseAddress = new Uri(_url);
+				string url = "jokes/categories";
+				return new string[] { Task.FromResult(client.GetStringAsync(url).Result).Result };
+			} catch(HttpRequestException e) {
+				System.Diagnostics.Debug.WriteLine(e.Message);
+			}
+			return null;
 		}
     }
 }
+
